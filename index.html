@@ -4,54 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Demolition Derby</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
-    html, body { width: 100%; height: 100%; overflow: auto; background: #0d0d0d; font-family: 'Segoe UI', Arial, sans-serif; }
-    #game-container { display: flex; flex-direction: column; align-items: center; padding: 10px; min-height: 100vh; }
-    #canvas-wrapper { position: relative; touch-action: none; }
-    #gameCanvas { border: 4px solid #555; border-radius: 8px; touch-action: none; max-width: 100%; height: auto; }
-    .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; }
-    .overlay.hidden { display: none; }
-    .title { font-size: 42px; font-weight: bold; color: #f5a623; text-shadow: 3px 3px 6px #000; letter-spacing: 2px; }
-    .subtitle { font-size: 15px; color: #aaa; margin: 20px 0; text-align: center; padding: 0 30px; line-height: 1.6; }
-    .controls-hint { font-size: 13px; color: #888; margin: 15px 0; text-align: center; line-height: 1.8; background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 8px; }
-    .controls-hint kbd { background: #333; padding: 3px 8px; border-radius: 4px; font-family: monospace; color: #fff; margin: 0 2px; }
-    .btn { background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 16px 50px; font-size: 22px; font-weight: bold; border-radius: 8px; cursor: pointer; touch-action: manipulation; box-shadow: 0 4px 8px rgba(0,0,0,0.4); margin-top: 10px; }
-    .btn:hover { filter: brightness(1.1); }
-    .btn:active { transform: scale(0.97); }
-    .btn-green { background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%); }
-    .score-display { color: white; font-size: 18px; margin: 8px 0; }
-    .high-score { color: #f5a623; font-size: 16px; margin-top: 15px; }
-    .game-over-title { font-size: 48px; font-weight: bold; color: #e74c3c; text-shadow: 3px 3px 6px #000; margin-bottom: 15px; }
-    .level-complete-title { font-size: 36px; font-weight: bold; color: #2ecc71; margin-bottom: 15px; }
-    #hud-panel { display: none; width: 100%; max-width: 800px; margin-top: 10px; padding: 10px 15px; background: rgba(0,0,0,0.7); border-radius: 8px; color: white; }
-    #hud-panel.active { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-    .hud-section { display: flex; align-items: center; gap: 10px; }
-    .hud-label { font-size: 12px; color: #888; text-transform: uppercase; }
-    .hud-value { font-size: 18px; font-weight: bold; }
-    .damage-bars { display: flex; gap: 8px; align-items: center; }
-    .damage-zone { text-align: center; }
-    .damage-zone .label { font-size: 9px; color: #888; margin-bottom: 2px; }
-    .damage-bar { width: 50px; height: 14px; background: #222; border-radius: 3px; overflow: hidden; border: 1px solid #444; }
-    .damage-fill { height: 100%; transition: width 0.15s, background 0.15s; }
-    #keyboard-hint { display: none; color: #666; font-size: 11px; margin-top: 8px; text-align: center; }
-    #keyboard-hint.active { display: block; }
-    #keyboard-hint kbd { background: #222; padding: 2px 6px; border-radius: 3px; font-family: monospace; color: #aaa; border: 1px solid #444; }
-    #touch-controls { display: none; width: 100%; max-width: 500px; margin-top: 10px; padding: 0 10px; }
-    #touch-controls.active { display: flex; justify-content: space-between; align-items: center; }
-    .control-group { display: flex; gap: 8px; }
-    .control-btn { width: 70px; height: 70px; border: none; border-radius: 12px; font-size: 26px; font-weight: bold; cursor: pointer; touch-action: manipulation; box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
-    .control-btn:active { transform: scale(0.92); }
-    .steer-btn { background: linear-gradient(180deg, #555 0%, #333 100%); color: white; }
-    .reverse-btn { background: linear-gradient(180deg, #f39c12 0%, #d68910 100%); color: white; }
-    .gas-btn { background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%); color: white; width: 90px; font-size: 20px; }
-    #timer-display { font-size: 24px; font-weight: bold; color: #f5a623; }
-    #countdown-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
-    #countdown-overlay.hidden { display: none; }
-    #countdown-text { font-size: 120px; font-weight: bold; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.5), 4px 4px 8px #000; }
-    #countdown-text.go { color: #2ecc71; font-size: 100px; }
-    .flag-container { margin-top: 20px; }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <div id="game-container">
