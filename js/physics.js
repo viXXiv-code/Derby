@@ -72,7 +72,7 @@ function updateCarPhysics(car, inputGas, inputReverse, inputLeft, inputRight) {
     car.lateralVel = slideAmount * turnDir * Math.sign(car.speed);
   } else {
     // Decay lateral velocity when not turning
-    car.lateralVel *= 0.85;
+    car.lateralVel *= P.SLIDE_FRICTION;
   }
 
   car.angle += car.angularVel;
