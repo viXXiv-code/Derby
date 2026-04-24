@@ -1,0 +1,107 @@
+# CLAUDE.md — Demolition Derby Project Briefing
+
+This file is the primary orientation document for Claude Code working on this project. Read it fully before making changes.
+
+## What this is
+
+A browser-based recreation of the 1984 Bally Midway arcade game **Demolition Derby**, with modern enhancements. Pure HTML5 Canvas + vanilla JavaScript. No build step, no framework, no dependencies. Opens directly in a browser. Deployed to GitHub Pages.
+
+## Project owner
+
+Joe owns product direction and testing. Joe has deep domain knowledge of real-world demolition derby and the original 1984 arcade game, but does not write code. All programming is delegated to Claude / Claude Code. Joe provides precise numerical feedback on physics tuning and gameplay feel.
+
+## Design principles — do not violate these without explicit approval
+
+1. **Authenticity first.** The physics must feel like a real car with real weight and real front-axle steering geometry. Cars pivot around the rear axle, not their center. If a change makes the game play more "arcadey" at the expense of this feel, reject it.
+2. **Engine protection is the core strategic loop.** The reason to ram with the rear is to protect the front (engine). Any new feature must reinforce this decision, not dilute it. Power-ups, weather, AI behaviors — all get evaluated against this.
+3. **Visual authenticity of classic American iron.** Cars are based on Crown Vic, Town Car, Impala, Imperial, Wagon, LeSabre, DeVille, Delta 88. Proportions matter. Wheels sit at fender positions. Cars are rendered at 1.2× scale for visibility.
+4. **Realistic damage zones.** Front (engine) is most critical, rear is most protected, sides are in between. Damage visibly accumulates with persistent scratches and dents.
+5. **No roleplay, no gimmicks.** This is a serious arcade recreation, not a cartoon.
+
+## Current state (v9)
+
+Single-file build: `index.html` (~2,270 lines). Fully functional. Deployed and playable.
+
+**Features shipped:**
+- Front-axle steering physics with realistic pivot behavior
+- Oriented Bounding Box (OBB / SAT) collision detection
+- Momentum-based collision response with angular impulse
+- Per-zone damage (front/side/rear) with separate HP pools
+- Visual damage accumulation — persistent scratches and dents in car-local space
+- Particle systems: sparks, debris, paint chips, smoke, fire
+- 5-layer procedural crash sound system (instant playback via pre-computed buffers)
+- Engine sound responsive to speed and throttle
+- AI opponents with state machine: scanning, approaching, positioning, charging, retreating, unsticking
+- 45-second contact timer — must hit someone every 45s or you're disqualified
+- Cars start around arena perimeter facing outward (authentic derby start)
+- Mobile touch controls + keyboard controls
+- Health bars above active cars
+- Floating damage popup numbers
+- Power-ups: wrench (repair) and boost
+- Multiple rounds with increasing car counts (8 + 2×level, capped at 14)
+- Mud tracks, arena environment
+- High score persistence via localStorage (key: `demolitionDerbyHighScoreV9`)
+
+## Physics constants — current tuning (v9)
+
+These were tuned iteratively with Joe providing direct feedback. v9 is significantly faster and grippier than earlier versions; do not revert toward older values without explicit approval. Any change to these requires testing and approval.
+
+```javascript
+BASE_ACCELERATION: 0.04
+MAX_FORWARD_SPEED: 9
+MAX_REVERSE_SPEED: 9            // same as forward when healthy
+ROLLING_FRICTION: 0.975
+MUD_DRAG: 0.965
+MAX_STEER_ANGLE: 0.42
+STEER_SPEED: 0.055
+STEER_RETURN_SPEED: 0.08
+MIN_SPEED_TO_TURN: 0.15         // steering only works while moving
+SLIDE_FRICTION: 0.72
+ANGULAR_FRICTION: 0.82
+RESTITUTION: 0.35
+COLLISION_BIAS: 0.3
+ANGULAR_IMPULSE_SCALE: 0.012
+CONTACT_TIMEOUT: 45 * 60        // 45 seconds at 60fps
+CAR_SCALE: 1.2
+```
+
+## Car roster (all stats currently identical — cosmetic-only differences)
+
+Crown Vic, Town Car, Impala, Imperial, Wagon, LeSabre, DeVille, Delta 88. All eight have `frontStrength: 1.0, rearStrength: 1.0, weight: 1.0, acceleration: 1.0, topSpeed: 1.0`. Only visual proportions (hood/trunk/cabin lengths) and body style (sedan vs wagon) vary. Differentiating these stats is a reasonable future direction but must be approved first — it would shift the game's balance.
+
+## File structure
+
+Currently one file: `index.html` (~2,270 lines, HTML + CSS + JS).
+
+**Refactor is planned but not yet done.** First Claude Code session will propose a modular split (likely: `index.html`, `css/styles.css`, `js/config.js`, `js/physics.js`, `js/collision.js`, `js/ai.js`, `js/rendering.js`, `js/audio.js`, `js/main.js`). Do not execute the refactor without showing Joe the plan and getting approval. Gameplay must be identical after refactor — use the deployed v9 as the behavioral baseline.
+
+## Roadmap (not prioritized — discuss before starting)
+
+- Split monolithic `index.html` into modules (first task)
+- Differentiated car stats (weight, acceleration, durability per model)
+- Weather effects (rain, mud, reduced visibility)
+- Championship mode (multi-round tournament with persistent damage between rounds)
+- Strategic power-ups beyond repair/boost: engine cooling, reinforced bumpers
+- Custom car selection screen with color picker
+- Online leaderboards (would require a backend — scope before committing)
+
+## How Joe works
+
+- Prefers iterative prototypes over big-bang features. Ship a minimal version, test, refine.
+- Gives precise numerical feedback ("the steering feels 20% too sensitive at low speed"). Take this literally.
+- Does not want flattery or agreement-for-agreement's-sake. Push back with evidence when you disagree.
+- Has ADHD. Prefers: short summaries up front, prioritized task lists, clear next-action framing. Avoid overwhelming walls of text.
+- Confidence calibration required: if you're not certain of something, say so with a rough confidence percentage and your reasoning.
+- Never fabricate. If you don't know, say you don't know and propose how to find out.
+
+## Deployment
+
+Live on GitHub Pages from the `main` branch, root folder. Any push to `main` auto-deploys within ~60 seconds. There is no staging environment. Test locally before pushing — `index.html` can be opened directly in a browser, no server needed, though a local server (`python -m http.server` or VS Code Live Server) avoids some cache weirdness during iteration.
+
+## Git workflow
+
+Single-developer project. Commit directly to `main` for small cosmetic/tuning changes. For larger refactors (like the module split) or anything that touches physics constants, create a feature branch, verify gameplay behavior, then merge.
+
+## When in doubt
+
+Ask Joe. He'd rather answer a clarifying question than get a wrong-direction implementation that has to be undone.
