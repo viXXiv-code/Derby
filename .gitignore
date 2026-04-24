@@ -24,3 +24,6 @@ build/
 # Local environment
 .env
 .env.local
+
+# Refactor snapshot for diffing (not committed)
+index.v9.html
