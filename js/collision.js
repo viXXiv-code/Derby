@@ -241,8 +241,14 @@ function applyDamage(car1, car2, collision, impactForce) {
   // Speed bonus damage
   const speed1 = Math.abs(car1.speed) + Math.sqrt((car1.vx||0)**2 + (car1.vy||0)**2);
   const speed2 = Math.abs(car2.speed) + Math.sqrt((car2.vx||0)**2 + (car2.vy||0)**2);
-  const speedBonus1 = speed1 > 2 ? (speed1 - 2) * 2.5 : 0;
-  const speedBonus2 = speed2 > 2 ? (speed2 - 2) * 2.5 : 0;
+  // Speed-bonus damage scales super-linearly so high-speed hits hurt
+  // proportionally more, matching kinetic-energy intuition.
+  // Why: linear bonus (was *2.5) made full-speed rams feel weak — only
+  // ~9% of front HP on a max-speed hit into a stopped car. Power 1.7
+  // brings a max-speed bonus from ~17.5 to ~110, turning that same hit
+  // into ~42% of front HP. Slow nudges stay small.
+  const speedBonus1 = speed1 > 2 ? Math.pow(speed1 - 2, 1.7) * 4 : 0;
+  const speedBonus2 = speed2 > 2 ? Math.pow(speed2 - 2, 1.7) * 4 : 0;
 
   // Apply damage to car1
   const dmg1 = (impactForce + speedBonus2) * getZoneDamageMultiplier(zone1, type1);
