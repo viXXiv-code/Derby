@@ -50,6 +50,7 @@ function gameLoop() {
     drawArena();
     disabledCars.forEach(drawCar);
     allCars.forEach(drawCar);
+    if (player) drawPlayerHighlight(player);
     drawCountdown();
     updateHUD();
     requestAnimationFrame(gameLoop);

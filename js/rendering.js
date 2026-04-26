@@ -1,4 +1,46 @@
 // ==================== DRAWING ====================
+function drawPlayerHighlight(car) {
+  const dim = getCarDimensions(car);
+  const halfLen = dim.length / 2;
+  const t = Date.now() / 200;
+
+  // Pulsing yellow ring around the player car
+  const pulseRadius = 52 + Math.sin(t) * 8;
+  ctx.save();
+  ctx.strokeStyle = '#f5a623';
+  ctx.lineWidth = 4;
+  ctx.globalAlpha = 0.55 + Math.sin(t) * 0.25;
+  ctx.beginPath();
+  ctx.arc(car.x, car.y, pulseRadius, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // "YOU" label with downward arrow above the car
+  const labelY = car.y - halfLen - 32;
+  ctx.save();
+  ctx.font = 'bold 22px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#000';
+  ctx.strokeText('YOU', car.x, labelY);
+  ctx.fillStyle = '#f5a623';
+  ctx.fillText('YOU', car.x, labelY);
+
+  // Downward-pointing triangle below the label
+  ctx.beginPath();
+  ctx.moveTo(car.x - 8, labelY + 14);
+  ctx.lineTo(car.x + 8, labelY + 14);
+  ctx.lineTo(car.x, labelY + 26);
+  ctx.closePath();
+  ctx.fillStyle = '#f5a623';
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 2;
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawHealthBar(car) {
   const dim = getCarDimensions(car);
   const halfLen = dim.length / 2;

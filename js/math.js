@@ -21,13 +21,6 @@ function getUniqueNumber() {
   return num;
 }
 
-function getUniqueColor(index, total) {
-  const hue = (index * 360 / total + Math.random() * 25) % 360;
-  const sat = 55 + Math.random() * 30;
-  const light = 38 + Math.random() * 18;
-  return { h: hue, s: sat, l: light };
-}
-
 function hsl(c, lAdj = 0) {
   return `hsl(${c.h}, ${c.s}%, ${Math.max(0, Math.min(100, c.l + lAdj))}%)`;
 }

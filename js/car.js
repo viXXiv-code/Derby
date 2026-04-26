@@ -61,7 +61,23 @@ function createCar(x, y, angle, isPlayer = false, colorIndex = 0, totalCars = 1)
     cabinLength: baseType.cabinLength * CAR_SCALE
   };
 
-  const color = isPlayer ? { h: 210, s: 70, l: 45 } : getUniqueColor(colorIndex, totalCars);
+  // Player keeps the signature bright blue regardless of model.
+  // Enemies pick from their model's color palette and jitter lightness
+  // for uniqueness within the palette (so two Crown Vics don't look
+  // identical). colorIndex is reused as the palette index seed so the
+  // distribution feels intentional rather than purely random.
+  let color;
+  if (isPlayer) {
+    color = { h: 210, s: 70, l: 45 };
+  } else {
+    const palette = baseType.colorPalette;
+    const base = palette[colorIndex % palette.length];
+    color = {
+      h: base.h,
+      s: base.s,
+      l: clamp(base.l + (Math.random() - 0.5) * 18, 8, 92)
+    };
+  }
 
   return {
     x, y, angle,
