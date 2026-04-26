@@ -6,7 +6,7 @@ const CAR_SCALE = 1.2; // 20% larger cars
 const CONTACT_TIMEOUT = 45 * 60; // 45 seconds at 60fps
 
 const PHYSICS = {
-  BASE_ACCELERATION: 0.04,
+  BASE_ACCELERATION: 0.08,
   MAX_FORWARD_SPEED: 9,
   MAX_REVERSE_SPEED: 9,  // Same as forward when healthy
   ROLLING_FRICTION: 0.975,
