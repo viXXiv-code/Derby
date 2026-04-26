@@ -12,15 +12,31 @@ Joe owns product direction and testing. Joe has deep domain knowledge of real-wo
 
 ## Design principles — do not violate these without explicit approval
 
-1. **Authenticity first.** The physics must feel like a real car with real weight and real front-axle steering geometry. Cars pivot around the rear axle, not their center. If a change makes the game play more "arcadey" at the expense of this feel, reject it.
+1. **Authenticity first.** The physics must feel like a real car with real weight and real front-axle steering geometry. The implementation is a bicycle-model approximation that feels close to rear-axle pivot — angular velocity is computed from `speed / turnRadius` (the standard rear-axle formula), but position integration updates the car's center, not the rear axle, so it's not a strict rear-axle pivot. Joe has tuned this to feel right; don't rewrite the integration just to match the label more literally. If a change makes the game play more "arcadey" at the expense of this feel, reject it.
 2. **Engine protection is the core strategic loop.** The reason to ram with the rear is to protect the front (engine). Any new feature must reinforce this decision, not dilute it. Power-ups, weather, AI behaviors — all get evaluated against this.
 3. **Visual authenticity of classic American iron.** Cars are based on Crown Vic, Town Car, Impala, Imperial, Wagon, LeSabre, DeVille, Delta 88. Proportions matter. Wheels sit at fender positions. Cars are rendered at 1.2× scale for visibility.
 4. **Realistic damage zones.** Front (engine) is most critical, rear is most protected, sides are in between. Damage visibly accumulates with persistent scratches and dents.
 5. **No roleplay, no gimmicks.** This is a serious arcade recreation, not a cartoon.
 
-## Current state (v9)
+## Current state (v9, post-refactor)
 
-Single-file build: `index.html` (~2,270 lines). Fully functional. Deployed and playable.
+Modular build:
+- `index.html` (~131 lines) — HTML structure + ordered `<script>` tags
+- `css/styles.css`
+- `js/config.js` — ARENA_*, WALL_THICKNESS, CAR_SCALE, CONTACT_TIMEOUT, PHYSICS, CAR_TYPES
+- `js/math.js` — vector math, hsl, dist, normAngle, clamp, formatTime, getUniqueNumber/Color
+- `js/audio.js` — initAudio, crash buffer synthesis, engine sound, muteEngine
+- `js/car.js` — geometry, createCar, damage % helpers, modifiers (speed/accel/steer)
+- `js/collision.js` — SAT detection, OBB checks, resolveCollision, applyDamage, getZoneDamageMultiplier, spawnDamagePopup
+- `js/physics.js` — updateCarPhysics
+- `js/ai.js` — updateAI (state machine)
+- `js/particles.js` — spawnSparks/Debris/PaintChips/Smoke
+- `js/rendering.js` — drawCar, drawArena, drawPowerUp, drawCountdown, drawHealthBar
+- `js/hud.js` — showOverlay, updateHUD, updateHighScoreDisplay
+- `js/game.js` — initGame, generateStartPositions, startGame, nextLevel, startCountdown
+- `js/main.js` — global state, controls, gameLoop, event listeners, bootstrap
+
+All JS uses classic `<script>` tags loaded in dependency order — no build step, no ES modules. Functions and `let`/`const` declarations remain global so inline `onclick="startGame()"` handlers in `index.html` continue to work. Open `index.html` directly in a browser, or use `python -m http.server` to avoid file:// quirks. Deployed and playable.
 
 **Features shipped:**
 - Front-axle steering physics with realistic pivot behavior
@@ -71,13 +87,13 @@ Crown Vic, Town Car, Impala, Imperial, Wagon, LeSabre, DeVille, Delta 88. All ei
 
 ## File structure
 
-Currently one file: `index.html` (~2,270 lines, HTML + CSS + JS).
+The module split is complete (see "Current state" above for the file list). When editing physics, AI, or rendering, look in the matching module rather than the inline `<script>` block. The inline `<script>` block no longer exists.
 
-**Refactor is planned but not yet done.** First Claude Code session will propose a modular split (likely: `index.html`, `css/styles.css`, `js/config.js`, `js/physics.js`, `js/collision.js`, `js/ai.js`, `js/rendering.js`, `js/audio.js`, `js/main.js`). Do not execute the refactor without showing Joe the plan and getting approval. Gameplay must be identical after refactor — use the deployed v9 as the behavioral baseline.
+If you add a new module, append a `<script src="js/your-module.js"></script>` line to `index.html` in dependency order (most modules can go anywhere; `main.js` must be last because it calls `gameLoop()` at the end and depends on every other module being loaded).
 
 ## Roadmap (not prioritized — discuss before starting)
 
-- Split monolithic `index.html` into modules (first task)
+- ~~Split monolithic `index.html` into modules~~ — done in `refactor/module-split` branch
 - Differentiated car stats (weight, acceleration, durability per model)
 - Weather effects (rain, mud, reduced visibility)
 - Championship mode (multi-round tournament with persistent damage between rounds)
