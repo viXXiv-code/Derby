@@ -79,12 +79,12 @@ function updateCarPhysics(car, inputGas, inputReverse, inputLeft, inputRight) {
   car.angularVel *= P.ANGULAR_FRICTION;
   // lateralVel no longer decays here since we set it directly above
 
-  // Decay impact velocities. 0.85 (was 0.94) so cars don't sail away
-  // after being hit — they crumple in place. Pairs with the
-  // super-linear speed-bonus damage in collision.js to make hits feel
-  // solid instead of glancing.
-  car.vx = (car.vx || 0) * 0.85;
-  car.vy = (car.vy || 0) * 0.85;
+  // Decay impact velocities. Tuned iteratively: started at 0.94 (cars
+  // sailed across the arena), tightened to 0.85 (better but still drifty),
+  // now 0.75 — a 12-unit impulse decays to under 1 unit in ~10 frames
+  // and dissipates within ~50 units of slide instead of ~80.
+  car.vx = (car.vx || 0) * 0.75;
+  car.vy = (car.vy || 0) * 0.75;
   if (Math.abs(car.vx) < 0.01) car.vx = 0;
   if (Math.abs(car.vy) < 0.01) car.vy = 0;
 
